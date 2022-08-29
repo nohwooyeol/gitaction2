@@ -1,7 +1,7 @@
-package com.hh99.nearby.signup.repository;
+package com.hh99.nearby.repository;
 
 
-import com.hh99.nearby.signup.entity.Member;
+import com.hh99.nearby.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

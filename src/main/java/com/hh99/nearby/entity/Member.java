@@ -1,4 +1,4 @@
-package com.hh99.nearby.signup.entity;
+package com.hh99.nearby.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
