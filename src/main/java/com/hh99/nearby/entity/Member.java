@@ -20,10 +20,16 @@ public class Member {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String email;
+
+    @Column(nullable = false)
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
+
+    @Column(nullable = false)
+    private String profileImg;
 
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);

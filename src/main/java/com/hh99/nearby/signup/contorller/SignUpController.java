@@ -1,9 +1,9 @@
 package com.hh99.nearby.signup.contorller;
 
-import com.hh99.nearby.ResponseDto;
 import com.hh99.nearby.signup.dto.SignUpRequestDto;
 import com.hh99.nearby.signup.service.SignUpService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -17,7 +17,7 @@ public class SignUpController {
 
     //회원가입
     @RequestMapping(value = "/api/signup", method = RequestMethod.POST)
-    public ResponseDto<?> signup(@RequestBody SignUpRequestDto requestDto) {
+    public ResponseEntity<?> signup(@RequestBody SignUpRequestDto requestDto) {
         return signUpService.createMember(requestDto);
     }
 
