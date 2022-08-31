@@ -24,8 +24,8 @@ public class SignUpController {
     }
     //이메일 인증
     @RequestMapping(value = "/api/email",method = RequestMethod.GET)
-    public ResponseEntity<?> emailCheck(@RequestParam("nickname") String nickname,HttpServletResponse response) throws IOException {
+    public ResponseEntity<?> emailCheck(@RequestParam("id") Long id,HttpServletResponse response) throws IOException {
         response.sendRedirect("http://localhost:8080/");
-        return signUpService.EmailCheck(nickname);
+        return signUpService.EmailCheck(id);
     }
 }

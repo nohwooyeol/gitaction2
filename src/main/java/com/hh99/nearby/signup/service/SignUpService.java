@@ -49,7 +49,7 @@ public class SignUpService {
                 .build();
 
         memberRepository.save(member);
-        emailService.sendSimpleMessage(requestDto.getEmail(), member.getNickname());
+        emailService.sendSimpleMessage(requestDto.getEmail(), member.getId());
 
         return ResponseEntity.ok().body(Map.of("msg","Successfully sign up."));
     }
@@ -67,8 +67,8 @@ public class SignUpService {
     }
     //이메일 인증
     @Transactional
-    public ResponseEntity<?> EmailCheck(String nickname){
-        Optional<Member> member = memberRepository.findByNickname(nickname);
+    public ResponseEntity<?> EmailCheck(Long id){
+        Optional<Member> member = memberRepository.findById(id);
         member.get().update();
         return ResponseEntity.ok().body(Map.of("msg","Email Check Success"));
     }
