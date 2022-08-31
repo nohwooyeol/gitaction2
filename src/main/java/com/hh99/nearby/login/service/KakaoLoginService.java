@@ -1,125 +1,144 @@
 package com.hh99.nearby.login.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.hh99.nearby.login.dto.KakaoRequestDto;
+import com.hh99.nearby.repository.MemberRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RestTemplate;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.UUID;
 
 @Service
+@RequiredArgsConstructor
 public class KakaoLoginService {
 
-    @Value("${kakao.restapi-key}")
-    String key;
+//    private final PasswordEncoder passwordEncoder;
 
-    @Value("${kakao.redirect-url}")
+    private final MemberRepository memberRepository;
+
+    @Value("${kakao.client.id}")
+    String restapikey;
+
+    @Value("${kakao.redirect.url}")
     String url;
 
 
+    public KakaoRequestDto kakaoLogin(String code)throws JsonProcessingException {
 
-    public String getKaKaoAccessToken(String code){
-        String access_Token=""; //엑세스 토큰 담을 변수
-        String refresh_Token =""; //리프레쉬토큰 담을 변수
-        String reqURL = "https://kauth.kakao.com/oauth/token"; //토큰 받는 주소
+        // 1. "인가 코드"로 "액세스 토큰" 요청
+        String accessToken = getAccessToken(code);
 
-        try{
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        // 2. 토큰으로 카카오 API 호출
+        KakaoRequestDto kakaoUserInfo = getKakaoUserInfo(accessToken); //엑세스 토큰값으로 유저 정보 받아오기!
 
-            //POST 요청을 위해 기본값이 false인 setDoOutput을 true로
-            conn.setRequestMethod("POST");
-            conn.setDoOutput(true);
+        // 3. 카카오ID로 회원가입 처리
+//        User kakaoUser = registerKakaoUserIfNeed(kakaoUserInfo); //담아온 카카오데이터로 로그인 처리
 
-            //POST 요청에 필요로 요구하는 파라미터 스트림을 통해 전송
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(conn.getOutputStream()));
-            StringBuilder sb = new StringBuilder();
-            sb.append("grant_type=authorization_code");
-            sb.append("&client_id=06bbace6fde025ff72772cc94cc52876"); // TODO REST_API_KEY 입력
-            sb.append("&redirect_uri=http://localhost:8080/kakao"); // TODO 인가코드 받은 redirect_uri 입력
-            sb.append("&code=" + code);
-            bw.write(sb.toString());
-            bw.flush();
 
-            //결과 코드가 200이라면 성공
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
-            //요청을 통해 얻은 JSON타입의 Response 메세지 읽어오기
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            String line = "";
-            String result = "";
-
-            while ((line = br.readLine()) != null) {
-                result += line;
-            }
-            System.out.println("response body : " + result);
-
-            //Gson 라이브러리에 포함된 클래스로 JSON파싱 객체 생성
-            JsonParser parser = new JsonParser();
-            JsonElement element = parser.parse(result);
-
-            access_Token = element.getAsJsonObject().get("access_token").getAsString();
-            refresh_Token = element.getAsJsonObject().get("refresh_token").getAsString();
-
-            System.out.println("access_token : " + access_Token);
-            System.out.println("refresh_token : " + refresh_Token);
-
-            br.close();
-            bw.close();
-        }catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return access_Token;
+        return kakaoUserInfo; //kakaouser로 리턴~
     }
 
-    public HashMap<String, Object> getUserInfo (String access_Token) {
+    // 1. "인가 코드"로 "액세스 토큰" 요청
+    private String getAccessToken(String code) throws JsonProcessingException { //인가코드 파라미터
+        // HTTP Header 생성
+        HttpHeaders headers = new HttpHeaders(); // 헤더를 생성
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        //헤더에 값을 넣어줌
 
-        //    요청하는 클라이언트마다 가진 정보가 다를 수 있기에 HashMap타입으로 선언
-        HashMap<String, Object> userInfo = new HashMap<>();
-        String reqURL = "https://kapi.kakao.com/v2/user/me";
-        try {
-            URL url = new URL(reqURL);
-            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setRequestMethod("POST");
+        // HTTP Body 생성
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>(); //바디는 키:벨류로 데이터를 보내서 MultivalueMap 사용
+        body.add("grant_type", "authorization_code"); //grant_type
+        body.add("client_id", restapikey); //내 restapi 키
+        body.add("redirect_uri", url); //리다이렉트 Url
+        body.add("code", code); //카카오로 받는 인가코드
 
-            //    요청에 필요한 Header에 포함될 내용
-            conn.setRequestProperty("Authorization", "Bearer " + access_Token);
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> kakaoTokenRequest = new HttpEntity<>(body, headers);
+        RestTemplate rt = new RestTemplate();//서버에게 요청을 보냄
+        ResponseEntity<String> response = rt.exchange(
+                "https://kauth.kakao.com/oauth/token",
+                HttpMethod.POST, //매서드는 포스트타입
+                kakaoTokenRequest, // 카카오서버로 보낼 httpEntity
+                String.class //스트링 클래스로
+        ); //카카오 데이터 받음
 
-            int responseCode = conn.getResponseCode();
-            System.out.println("responseCode : " + responseCode);
-
-            BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-
-            String line = "";
-            String result = "";
-
-            while ((line = br.readLine()) != null) {
-                result += line;
-            }
-            System.out.println("response body : " + result);
-
-            JsonParser parser = new JsonParser();
-            JsonElement element = parser.parse(result);
-
-            JsonObject properties = element.getAsJsonObject().get("properties").getAsJsonObject();
-            JsonObject kakao_account = element.getAsJsonObject().get("kakao_account").getAsJsonObject();
-
-            String nickname = properties.getAsJsonObject().get("nickname").getAsString();
-            String email = kakao_account.getAsJsonObject().get("email").getAsString();
-
-            userInfo.put("nickname", nickname);
-            userInfo.put("email", email);
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
-        return userInfo;
+        // HTTP 응답 (JSON) -> 액세스 토큰 파싱
+        String responseBody = response.getBody(); //바디 부분
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody); //Json형태를 객체로 바꾸기
+        return jsonNode.get("access_token").asText(); //엑세스토큰 받은거 넘기기
     }
+
+    // 2. 토큰으로 카카오 API 호출
+    private KakaoRequestDto getKakaoUserInfo(String accessToken) throws JsonProcessingException {
+        // HTTP Header 생성
+        HttpHeaders headers = new HttpHeaders(); // 헤더넣는 객체
+        headers.add("Authorization", "Bearer " + accessToken); //엑세스 토큰 값
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8"); //타입
+
+        // HTTP 요청 보내기
+        HttpEntity<MultiValueMap<String, String>> kakaoUserInfoRequest = new HttpEntity<>(headers);
+        RestTemplate rt = new RestTemplate();//서버에게 요청을 보냄
+        ResponseEntity<String> response = rt.exchange(
+                "https://kapi.kakao.com/v2/user/me",
+                HttpMethod.POST,  //매서드는 포스트타입
+                kakaoUserInfoRequest, // 카카오서버로 보낼 httpEntity
+                String.class //스트링 클래스로
+        );
+
+        // responseBody에 있는 정보를 꺼냄
+        String responseBody = response.getBody(); //바디에 정보를 꺼냄
+        ObjectMapper objectMapper = new ObjectMapper();
+        JsonNode jsonNode = objectMapper.readTree(responseBody); //Json형태를 객체로 바꾸기
+
+        Long id = jsonNode.get("id").asLong(); // 아이디
+        //String email = jsonNode.get("kakao_account").get("email").asText(); //이메일
+        String nickname = jsonNode.get("properties") // 닉네임
+                .get("nickname").asText();
+
+        return new KakaoRequestDto(id, nickname); //Dto 에 담아서 리턴
+    }
+
+//    // 3. 카카오ID로 회원가입 처리
+//    private User registerKakaoUserIfNeed (KakaoRequestDto kakaoUserInfo) {
+//        // DB 에 중복된 email이 있는지 확인
+//       // String kakaoEmail = kakaoUserInfo.getEmail(); //카카오 이메일값
+//        String nickname = kakaoUserInfo.getNickname(); //닉네임값
+//        User kakaoUser = memberRepository.findByUserEmail(kakaoEmail)  //카카오 이메일이 db에 있는 확인
+//                .orElse(null);
+//
+//        if (kakaoUser == null) { //db에 이메일이 없다면
+//            // 회원가입
+//            // password: random UUID
+//           // String password = UUID.randomUUID().toString(); //이건 없어도 됨
+//            // String encodedPassword = passwordEncoder.encode(password);//패스워드 암호화
+//
+//            String profile = "https://ossack.s3.ap-northeast-2.amazonaws.com/basicprofile.png"; //프로필 이미지
+//
+//            kakaoUser = new User(kakaoEmail, nickname, profile, encodedPassword); // 카카오 유저를 담을 객체
+//            memberRepository.save(kakaoUser); // db에 저장
+//
+//        }
+//        return kakaoUser; //유저정보 리턴
+//    }
 }

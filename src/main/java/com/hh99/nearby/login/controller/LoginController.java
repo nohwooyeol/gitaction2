@@ -1,5 +1,7 @@
 package com.hh99.nearby.login.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.hh99.nearby.login.dto.KakaoRequestDto;
 import com.hh99.nearby.login.dto.LoginRequestDto;
 import com.hh99.nearby.login.service.KakaoLoginService;
 import lombok.RequiredArgsConstructor;
@@ -15,11 +17,11 @@ public class LoginController {
     private final KakaoLoginService kakaoLoginService;
 
 
-    @PostMapping("/api/login")
-    public ResponseEntity<?> login (){
-
-        return ResponseEntity.ok("");
-    }
+//    @PostMapping("/api/login")
+//    public ResponseEntity<?> login (){
+//
+//        return ResponseEntity.ok("");
+//    }
 
     //로그인
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
@@ -36,10 +38,9 @@ public class LoginController {
     }
 
     @GetMapping("/api/kakaologin")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code){
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
         System.out.println(code);
-        String kakao = kakaoLoginService.getKaKaoAccessToken(code);
-        System.out.println(kakao);
-        return ResponseEntity.ok("");
+        KakaoRequestDto kakaoUser = kakaoLoginService.kakaoLogin(code);
+        return ResponseEntity.ok(kakaoUser);
     }
 }

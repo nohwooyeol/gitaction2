@@ -19,36 +19,37 @@ public class LoginService {
 
     private final MemberRepository memberRepository;
 
-    private final PasswordEncoder passwordEncoder;
+//    private final PasswordEncoder passwordEncoder;
 
-    @Transactional
-    public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
-        Member member = isPresentMemberByUsername(requestDto.getUsername());
-        if (null == member) {
-            return ResponseDto.fail("400", "Not existing email or wrong password");
-        }
-
-        if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
-            return ResponseDto.fail("400", "Not existing email or wrong password");
-        }
-
-//        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
-//        tokenToHeaders(tokenDto, response);
-
-        return ResponseDto.success(null, "200", "Successfully logged in");
-    }
-
-    public ResponseDto<?> logout(HttpServletRequest request) {
-
+//    @Transactional
+//    public ResponseDto<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
 //        Member member = isPresentMemberByUsername(requestDto.getUsername());
 //        if (null == member) {
-//            return ResponseDto.fail("400",
-//                    "사용자를 찾을 수 없습니다.");
+//            return ResponseDto.fail("400", "Not existing email or wrong password");
 //        }
-//        tokenProvider.deleteRefreshToken(member);
 //
-       return ResponseDto.success(null, "200", "Successfully logged out");
-    }
+//        if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
+//            return ResponseDto.fail("400", "Not existing email or wrong password");
+//        }
+//
+////        TokenDto tokenDto = tokenProvider.generateTokenDto(member);
+////        tokenToHeaders(tokenDto, response);
+//
+// //       return ResponseDto.success(null, "200", "Successfully logged in");
+//        re
+//    }
+
+//    public ResponseDto<?> logout(HttpServletRequest request) {
+//
+////        Member member = isPresentMemberByUsername(requestDto.getUsername());
+////        if (null == member) {
+////            return ResponseDto.fail("400",
+////                    "사용자를 찾을 수 없습니다.");
+////        }
+////        tokenProvider.deleteRefreshToken(member);
+////
+////       return ResponseDto.success(null, "200", "Successfully logged out");
+//    }
 
     @Transactional(readOnly = true)
     public Member isPresentMemberByUsername(String username) {
