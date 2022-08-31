@@ -1,7 +1,6 @@
 package com.hh99.nearby.signup.service;
 
 
-import com.hh99.nearby.ResponseDto;
 import com.hh99.nearby.signup.dto.SignUpRequestDto;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.repository.MemberRepository;
@@ -58,7 +57,7 @@ public class SignUpService {
 
     @Transactional(readOnly = true)
     public Member isPresentMemberByNickname(String nickname) {
-        Optional<Member> optionalMember = memberRepository.findByUsername(nickname);
+        Optional<Member> optionalMember = memberRepository.findByNickname(nickname);
         return optionalMember.orElse(null);
     }
 
