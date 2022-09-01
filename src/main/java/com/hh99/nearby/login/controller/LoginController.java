@@ -18,20 +18,16 @@ public class LoginController {
     private final LoginService loginService;
     private final KakaoLoginService kakaoLoginService;
 
-
-
     //로그인
     @RequestMapping(value = "/api/login", method = RequestMethod.POST)
     public ResponseEntity<?> login(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-        loginService.login(requestDto, response);
-        return ResponseEntity.ok("");
+        return  loginService.login(requestDto, response);
     }
 
     //로그아웃
-    @RequestMapping(value = "/api/logout", method = RequestMethod.POST)
+    @RequestMapping(value = "/api/logout", method = RequestMethod.DELETE)
     public ResponseEntity<?> logout(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-         loginService.logout(requestDto);
-        return ResponseEntity.ok("");
+        return loginService.logout(requestDto);
     }
 
     @GetMapping("/api/kakaologin")
