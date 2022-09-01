@@ -47,7 +47,7 @@ public class TokenProvider {
 
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
-                .setSubject(member.getUsername())
+                .setSubject(member.getEmail())
                 .claim(AUTHORITIES_KEY, "")
                 .setExpiration(accessTokenExpiresIn)
                 .signWith(key, SignatureAlgorithm.HS256)
@@ -105,7 +105,6 @@ public class TokenProvider {
         if (null == refreshToken) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("유효하지 않은 토큰입니다.");
         }
-
         refreshTokenRepository.delete(refreshToken);
         return ResponseEntity.status(HttpStatus.OK).body("리프레쉬 토큰삭제 성공");
     }
