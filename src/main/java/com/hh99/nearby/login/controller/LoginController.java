@@ -3,6 +3,7 @@ package com.hh99.nearby.login.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.hh99.nearby.login.dto.KakaoRequestDto;
 import com.hh99.nearby.login.dto.LoginRequestDto;
+import com.hh99.nearby.login.service.LoginService;
 import com.hh99.nearby.login.service.KakaoLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,14 @@ import javax.servlet.http.HttpServletResponse;
 @RequiredArgsConstructor
 @RestController
 public class LoginController {
+
+    private final LoginService loginService;
+
+
+    @PostMapping("/api/login")
+    public ResponseEntity<?> login (){
+        return ResponseEntity.ok("");
+    }
 
     private final KakaoLoginService kakaoLoginService;
 
