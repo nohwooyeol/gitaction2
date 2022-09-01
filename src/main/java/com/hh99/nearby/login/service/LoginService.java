@@ -1,5 +1,6 @@
 package com.hh99.nearby.login.service;
 
+import com.hh99.nearby.ResponseDto;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.login.dto.LoginRequestDto;
 import com.hh99.nearby.repository.MemberRepository;
@@ -13,6 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
@@ -65,7 +67,9 @@ public class LoginService {
         return optionalMember.orElse(null);
     }
 
-    public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
-        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
-    }
+//    public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
+//        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
+////        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
+//        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+//    }
 }
