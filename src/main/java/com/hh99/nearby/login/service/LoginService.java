@@ -67,9 +67,9 @@ public class LoginService {
         return optionalMember.orElse(null);
     }
 
-//    public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
-//        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
-////        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
-//        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
-//    }
+    public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
+        response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
+//        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
+        response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
+    }
 }
