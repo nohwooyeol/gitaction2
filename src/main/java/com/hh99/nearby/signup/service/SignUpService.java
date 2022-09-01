@@ -6,6 +6,7 @@ import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,7 @@ import java.util.Optional;
 public class SignUpService {
 
     private final MemberRepository memberRepository;
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
     //회원가입
@@ -42,8 +43,8 @@ public class SignUpService {
         Member member = Member.builder()
                 .email(requestDto.getEmail())
                 .nickname(requestDto.getNickname())
-//                .password(passwordEncoder.encode(requestDto.getPassword()))
-                .password(requestDto.getPassword())
+                .password(passwordEncoder.encode(requestDto.getPassword()))
+//                .password(requestDto.getPassword())
                 .emailCheck(false)
                 .profileImg(requestDto.getProfileImg())
                 .build();
