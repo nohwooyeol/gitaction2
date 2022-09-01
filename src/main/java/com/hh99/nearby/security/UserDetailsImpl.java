@@ -6,10 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 @Data
@@ -21,10 +19,7 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority = new SimpleGrantedAuthority("");
-        Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(authority);
-        return authorities;
+        return null;
     }
 
     @Override
@@ -33,9 +28,7 @@ public class UserDetailsImpl implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
-        return member.getUsername();
-    }
+    public String getUsername() { return member.getEmail(); }
 
     @Override
     public boolean isAccountNonExpired() {

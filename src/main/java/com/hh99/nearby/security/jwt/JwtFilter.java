@@ -9,6 +9,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,6 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
     public static String BEARER_PREFIX = "Bearer ";
 
 //    public static String AUTHORITIES_KEY = "auth";
+    @Value("${jwt.secret}")
     private final String SECRET_KEY;
     private final TokenProvider tokenProvider;
     private final UserDetailsServiceImpl userDetailsService;
@@ -63,19 +65,11 @@ public class JwtFilter extends OncePerRequestFilter {
                 );
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
-
             String subject = claims.getSubject();
-//            Collection<? extends GrantedAuthority> authorities =
-//                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
-//                            .map(SimpleGrantedAuthority::new)
-//                            .collect(Collectors.toList());
-
             UserDetails principal = userDetailsService.loadUserByUsername(subject);
-
-            Authentication authentication = new UsernamePasswordAuthenticationToken(principal, jwt);
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principal,jwt);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
-
         filterChain.doFilter(request, response);
     }
     private String resolveToken(HttpServletRequest request) {

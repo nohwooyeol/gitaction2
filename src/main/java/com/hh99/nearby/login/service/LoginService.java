@@ -1,6 +1,5 @@
 package com.hh99.nearby.login.service;
 
-import com.hh99.nearby.ResponseDto;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.login.dto.LoginRequestDto;
 import com.hh99.nearby.repository.MemberRepository;
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
@@ -32,44 +30,39 @@ public class LoginService {
 
     @Transactional
     public ResponseEntity<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
-        Member member = isPresentMemberByUsername(requestDto.getUsername());
+        Member member = isPresentMemberByEmail(requestDto.getEmail());
         if (null == member) {
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not existing email or wrong password");
+            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자를 찾을수 없습니다.");
         }
 
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not existing email or wrong password");
-//            return ResponseDto.fail("400", "Not existing email or wrong password");
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);
 
         return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
-//        return ResponseDto.success(null, "200", "Successfully logged in");
     }
 
-    public ResponseEntity<?> logout(LoginRequestDto request) {
-
-        Member member = isPresentMemberByUsername(request.getUsername());
+    public ResponseEntity<?> logout(LoginRequestDto requestDto) {
+        Member member = isPresentMemberByEmail(requestDto.getEmail());
         if (null == member) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자를 찾을수 없습니다.");
         }
         tokenProvider.deleteRefreshToken(member);
 
         return ResponseEntity.status(HttpStatus.OK).body("로그아웃 성공");
-//       return ResponseDto.success(null, "200", "Successfully logged out");
     }
 
     @Transactional(readOnly = true)
-    public Member isPresentMemberByUsername(String username) {
-        Optional<Member> optionalMember = memberRepository.findByUsername(username);
+    public Member isPresentMemberByEmail(String email) {
+        Optional<Member> optionalMember = memberRepository.findByEmail(email);
         return optionalMember.orElse(null);
     }
 
     public void tokenToHeaders(TokenDto tokenDto, HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + tokenDto.getAccessToken());
-//        response.addHeader("RefreshToken", tokenDto.getRefreshToken());
         response.addHeader("Access-Token-Expire-Time", tokenDto.getAccessTokenExpiresIn().toString());
     }
 }
