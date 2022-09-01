@@ -20,12 +20,26 @@ public class Member {
     private Long id;
 
     @Column(nullable = false)
-    private String username;
+    private String email;
+
+    @Column(nullable = false)
+    private String nickname;
 
     @Column(nullable = false)
     private String password;
 
+    @Column(nullable = false)
+    private String profileImg;
+
+    //이메일 인증 확인
+    @Column(nullable = false)
+    private boolean emailCheck;
+
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
+    }
+
+    public void update() {
+        this.emailCheck = true;
     }
 }
