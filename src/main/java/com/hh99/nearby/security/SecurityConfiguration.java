@@ -30,8 +30,8 @@ public class SecurityConfiguration {
     private static final String[] PERMIT_URL_ARRAY = {
             "/api/signup",
             "/api/login",
-            "/h2-console/**"
-
+            "/h2-console/**",
+            "/api/kakaologin"
     };
     @Bean
     public PasswordEncoder passwordEncoder() {
