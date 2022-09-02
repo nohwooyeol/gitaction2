@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.StringUtils;
@@ -24,13 +26,16 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.security.Key;
 import java.time.Instant;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 public class JwtFilter extends OncePerRequestFilter {
     public static String AUTHORIZATION_HEADER = "Authorization";
     public static String BEARER_PREFIX = "Bearer ";
 
-//    public static String AUTHORITIES_KEY = "auth";
+    public static String AUTHORITIES_KEY = "auth";
     @Value("${jwt.secret}")
     private final String SECRET_KEY;
     private final TokenProvider tokenProvider;
@@ -66,8 +71,14 @@ public class JwtFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             }
             String subject = claims.getSubject();
+            Collection<? extends GrantedAuthority> authorities =
+                    Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
+                            .map(SimpleGrantedAuthority::new)
+                            .collect(Collectors.toList());
+
             UserDetails principal = userDetailsService.loadUserByUsername(subject);
-            Authentication authentication = new UsernamePasswordAuthenticationToken(principal,jwt);
+//            String EncodingPassword =  .encode(principal.getPassword());
+            Authentication authentication = new UsernamePasswordAuthenticationToken(principal,jwt,authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

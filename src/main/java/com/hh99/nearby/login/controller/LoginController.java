@@ -7,6 +7,8 @@ import com.hh99.nearby.login.service.LoginService;
 import com.hh99.nearby.login.service.KakaoLoginService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletResponse;
@@ -26,8 +28,8 @@ public class LoginController {
 
     //로그아웃
     @RequestMapping(value = "/api/logout", method = RequestMethod.DELETE)
-    public ResponseEntity<?> logout(@RequestBody LoginRequestDto requestDto, HttpServletResponse response) {
-        return loginService.logout(requestDto);
+    public ResponseEntity<?> logout(@AuthenticationPrincipal UserDetails user, HttpServletResponse response) {
+        return loginService.logout(user);
     }
 
     @GetMapping("/api/kakaologin")
