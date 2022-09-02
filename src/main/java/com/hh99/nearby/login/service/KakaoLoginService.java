@@ -3,9 +3,7 @@ package com.hh99.nearby.login.service;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.login.dto.KakaoRequestDto;
 import com.hh99.nearby.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,18 +19,11 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.util.HashMap;
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class KakaoLoginService {
 
-//    private final PasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
     private final MemberRepository memberRepository;
 
@@ -51,8 +42,8 @@ public class KakaoLoginService {
         // 2. 토큰으로 카카오 API 호출
         KakaoRequestDto kakaoUserInfo = getKakaoUserInfo(accessToken); //엑세스 토큰값으로 유저 정보 받아오기!
 
-        // 3. 카카오ID로 회원가입 처리
-//        User kakaoUser = registerKakaoUserIfNeed(kakaoUserInfo); //담아온 카카오데이터로 로그인 처리
+//         3. 카카오ID로 회원가입 처리
+        Member kakaoUser = registerKakaoUserIfNeed(kakaoUserInfo); //담아온 카카오데이터로 로그인 처리
 
 
         return kakaoUserInfo; //kakaouser로 리턴~
@@ -115,30 +106,41 @@ public class KakaoLoginService {
         //String email = jsonNode.get("kakao_account").get("email").asText(); //이메일
         String nickname = jsonNode.get("properties") // 닉네임
                 .get("nickname").asText();
+        String profileImg = jsonNode.get("properties").get("profile_image").asText(); //프로필url
 
-        return new KakaoRequestDto(id, nickname); //Dto 에 담아서 리턴
+        return new KakaoRequestDto(id, nickname,profileImg); //Dto 에 담아서 리턴
     }
 
-//    // 3. 카카오ID로 회원가입 처리
-//    private User registerKakaoUserIfNeed (KakaoRequestDto kakaoUserInfo) {
-//        // DB 에 중복된 email이 있는지 확인
-//       // String kakaoEmail = kakaoUserInfo.getEmail(); //카카오 이메일값
-//        String nickname = kakaoUserInfo.getNickname(); //닉네임값
-//        User kakaoUser = memberRepository.findByUserEmail(kakaoEmail)  //카카오 이메일이 db에 있는 확인
-//                .orElse(null);
-//
-//        if (kakaoUser == null) { //db에 이메일이 없다면
-//            // 회원가입
-//            // password: random UUID
-//           // String password = UUID.randomUUID().toString(); //이건 없어도 됨
-//            // String encodedPassword = passwordEncoder.encode(password);//패스워드 암호화
-//
-//            String profile = "https://ossack.s3.ap-northeast-2.amazonaws.com/basicprofile.png"; //프로필 이미지
-//
+    // 3. 카카오ID로 회원가입 처리
+    private Member registerKakaoUserIfNeed (KakaoRequestDto kakaoUserInfo) {
+
+        Long kakaoid = kakaoUserInfo.getKakaoid();
+        String nickname = kakaoUserInfo.getNickname(); //닉네임값
+        String profileImg = kakaoUserInfo.getProfileImg();
+
+        Member kakaoUser = memberRepository.findByNickname(nickname)  //카카오 닉네임이 있는지 확인
+                .orElse(null);
+
+        if (kakaoUser == null) { //db에 이메일이 없다면
+            // 회원가입
+            // password: random UUID
+           // String password = UUID.randomUUID().toString(); //이건 없어도 됨
+            // String encodedPassword = passwordEncoder.encode(password);//패스워드 암호화
+
+            String profile = "https://ossack.s3.ap-northeast-2.amazonaws.com/basicprofile.png"; //프로필 이미지
+
 //            kakaoUser = new User(kakaoEmail, nickname, profile, encodedPassword); // 카카오 유저를 담을 객체
-//            memberRepository.save(kakaoUser); // db에 저장
-//
-//        }
-//        return kakaoUser; //유저정보 리턴
-//    }
+            kakaoUser = Member.builder()
+                    .email(null)
+                    .nickname(nickname)
+                    .password(null)
+                    .profileImg(profileImg)
+                    .emailCheck(true)
+                    .kakaoId(kakaoid)
+                    .build();
+            memberRepository.save(kakaoUser); // db에 저장
+
+        }
+        return kakaoUser; //유저정보 리턴
+    }
 }
