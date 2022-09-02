@@ -9,6 +9,7 @@ import com.hh99.nearby.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,8 +46,8 @@ public class LoginService {
         return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
     }
 
-    public ResponseEntity<?> logout(LoginRequestDto requestDto) {
-        Member member = isPresentMemberByEmail(requestDto.getEmail());
+    public ResponseEntity<?> logout(UserDetails user) {
+        Member member = isPresentMemberByEmail(user.getUsername());
         if (null == member) {
             return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자를 찾을수 없습니다.");
         }
