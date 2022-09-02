@@ -10,8 +10,9 @@ import lombok.Getter;
 @Getter
 public class KakaoRequestDto {
 
-    private Long id;
+    private Long kakaoid;
     private String nickname;
+    private String profileImg;
 
 
 }

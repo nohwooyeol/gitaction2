@@ -20,21 +20,24 @@ public class Member {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String email;
 
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String profileImg;
 
     //이메일 인증 확인
     @Column(nullable = false)
     private boolean emailCheck;
+
+    @Column
+    private Long kakaoId;
 
     public boolean validatePassword(PasswordEncoder passwordEncoder, String password) {
         return passwordEncoder.matches(password, this.password);
