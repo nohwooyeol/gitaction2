@@ -27,6 +27,11 @@ public class DetailController {
     public ResponseEntity<?> participateChallenge(@PathVariable Long id, @AuthenticationPrincipal UserDetails user){
         return detailService.participateChallenge(id,user);
     }
+    // 참여 취소하기
+    @PostMapping("/api/challenge/cancel/{id}")
+    public ResponseEntity<?> cancelChallenge(@PathVariable Long id, @AuthenticationPrincipal UserDetails user){
+        return detailService.cancelChallenge(id,user);
+    }
 
 
 }

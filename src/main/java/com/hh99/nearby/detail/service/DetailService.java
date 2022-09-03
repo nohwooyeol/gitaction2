@@ -69,5 +69,21 @@ public class DetailService {
         memberChallengeRepository.save(memberChallenge);
         return ResponseEntity.ok().body(Map.of("msg", "참여하기 완료"));
     }
+    //참여 취소하기
+    @Transactional
+    public ResponseEntity<?> cancelChallenge(@PathVariable Long id, @AuthenticationPrincipal UserDetails user){
+        Challenge challenge = isPresentChallenge(id);
+        if (challenge == null) {
+            return ResponseEntity.badRequest().body(Map.of("msg", "잘못된 챌린지 번호"));
+        }
+        Optional<Member> member = memberRepository.findByEmail(user.getUsername());
+
+        if (!challenge.getWriter().getId().equals(member.get().getId())){
+            return ResponseEntity.badRequest().body(Map.of("msg","참여하지 않으셨습니다."));
+        }
+        Optional<MemberChallenge> memberChallenge = memberChallengeRepository.findByMember_IdAndChallenge_Id(id,member.get().getId());
+        memberChallengeRepository.delete(memberChallenge.get());
+        return ResponseEntity.ok().body(Map.of("msg", "참여하기 취소 완료"));
+    }
 }
 
