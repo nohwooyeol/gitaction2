@@ -70,7 +70,7 @@ public class SignUpService {
 
     //이메일 인증
     @Transactional
-    public ResponseEntity<?> EmailCheck(Long id) {
+    public ResponseEntity<?> email(Long id) {
         Optional<Member> member = memberRepository.findById(id);
         member.get().update();
         return ResponseEntity.ok().body(Map.of("msg", "Email Check Success"));
@@ -85,6 +85,15 @@ public class SignUpService {
             return ResponseEntity.badRequest().body(Map.of("msg", "닉네임 중복입니다"));
         }
         return ResponseEntity.ok().body(Map.of("msg", "가입가능한 닉네임입니다."));
+    }
+    //이메일 중복검사
+    @Transactional
+    public ResponseEntity<?> emailCheck(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if (member.isPresent()){
+            return ResponseEntity.badRequest().body(Map.of("msg", "이메일 중복입니다."));
+        }
+        return ResponseEntity.ok().body(Map.of("msg", "가입가능한 이메일입니다."));
     }
 }
 
