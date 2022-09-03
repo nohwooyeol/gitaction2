@@ -1,4 +1,4 @@
-package com.hh99.nearby.repository;
+package com.hh99.nearby.signup.repository;
 
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.entity.RefreshToken;

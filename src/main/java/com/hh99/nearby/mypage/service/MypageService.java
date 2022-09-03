@@ -4,7 +4,7 @@ package com.hh99.nearby.mypage.service;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.mypage.dto.request.MypageRequestDto;
 import com.hh99.nearby.mypage.dto.response.MemberResponseDto;
-import com.hh99.nearby.repository.MemberRepository;
+import com.hh99.nearby.signup.repository.MemberRepository;
 import com.hh99.nearby.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
