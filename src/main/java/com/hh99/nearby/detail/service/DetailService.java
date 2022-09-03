@@ -31,6 +31,9 @@ public class DetailService {
         if (challenge == null) {
             return ResponseEntity.badRequest().body(Map.of("msg", "잘못된 챌린지 번호"));
         }
+
+        long participatePeople = challenge.getMemberChallengeList().size();
+
         DetailResponseDto detailResponseDto = DetailResponseDto.builder()
                 .title(challenge.getTitle())
                 .challengeImg(challenge.getChallengeimg())
@@ -39,6 +42,7 @@ public class DetailService {
                 .targetTime(challenge.getTargettime())
                 .endTime(challenge.getEndtime())
                 .limitPeople(challenge.getLimitpeople())
+                .participatePeople(participatePeople)
                 .content(challenge.getContent())
                 .notice(challenge.getNotice())
                 .writer(challenge.getWriter().getNickname())

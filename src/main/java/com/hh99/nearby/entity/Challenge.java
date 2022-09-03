@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Builder
@@ -52,6 +53,10 @@ public class Challenge extends Timestamped{
     @JoinColumn(name = "member_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private Member Writer;
+
+    @OneToMany(mappedBy="challenge", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MemberChallenge> memberChallengeList;
+
 
 
 

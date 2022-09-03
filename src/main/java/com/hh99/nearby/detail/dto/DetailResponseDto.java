@@ -22,6 +22,7 @@ public class DetailResponseDto {
     private Long targetTime;
     private LocalDateTime endTime;
     private Long limitPeople;
+    private Long participatePeople;
     private String content;
     private String notice;
     private String writer;
