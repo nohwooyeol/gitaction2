@@ -14,7 +14,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class Member {
+public class Member extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

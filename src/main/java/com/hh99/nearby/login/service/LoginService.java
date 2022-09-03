@@ -2,8 +2,8 @@ package com.hh99.nearby.login.service;
 
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.login.dto.LoginRequestDto;
-import com.hh99.nearby.repository.MemberRepository;
-import com.hh99.nearby.repository.RefreshTokenRepository;
+import com.hh99.nearby.signup.repository.MemberRepository;
+import com.hh99.nearby.signup.repository.RefreshTokenRepository;
 import com.hh99.nearby.security.jwt.TokenDto;
 import com.hh99.nearby.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
