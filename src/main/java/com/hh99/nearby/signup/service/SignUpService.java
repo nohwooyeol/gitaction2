@@ -5,6 +5,7 @@ import com.hh99.nearby.signup.dto.SignUpRequestDto;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.signup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,17 +28,17 @@ public class SignUpService {
     public ResponseEntity<?> createMember(SignUpRequestDto requestDto) throws MessagingException {
         //email check
         if (null != isPresentMemberByEmail(requestDto.getEmail())) {
-            return ResponseEntity.badRequest().body(Map.of("msg","Already existing email."));
+            return ResponseEntity.badRequest().body(Map.of("msg", "Already existing email."));
         }
         //nickname check
         if (null != isPresentMemberByNickname(requestDto.getNickname())) {
-            return ResponseEntity.badRequest().body(Map.of("msg","Already existing nickname."));
+            return ResponseEntity.badRequest().body(Map.of("msg", "Already existing nickname."));
         }
         if (requestDto.getEmail().isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("msg","Please write proper email address to email field."));
+            return ResponseEntity.badRequest().body(Map.of("msg", "Please write proper email address to email field."));
         }
         if (requestDto.getPassword().isBlank()) {
-            return ResponseEntity.badRequest().body(Map.of("msg","Please write proper password to Password field."));
+            return ResponseEntity.badRequest().body(Map.of("msg", "Please write proper password to Password field."));
         }
 
         Member member = Member.builder()
@@ -52,7 +53,7 @@ public class SignUpService {
         memberRepository.save(member);
         emailService.sendSimpleMessage(requestDto.getEmail(), member.getId());
 
-        return ResponseEntity.ok().body(Map.of("msg","Successfully sign up."));
+        return ResponseEntity.ok().body(Map.of("msg", "Successfully sign up."));
     }
 
     @Transactional(readOnly = true)
@@ -66,12 +67,34 @@ public class SignUpService {
         Optional<Member> optionalMember = memberRepository.findByNickname(nickname);
         return optionalMember.orElse(null);
     }
+
     //이메일 인증
     @Transactional
-    public ResponseEntity<?> EmailCheck(Long id){
+    public ResponseEntity<?> email(Long id) {
         Optional<Member> member = memberRepository.findById(id);
         member.get().update();
-        return ResponseEntity.ok().body(Map.of("msg","Email Check Success"));
+        return ResponseEntity.ok().body(Map.of("msg", "Email Check Success"));
     }
 
+    
+    //닉네임 중복체크
+    @Transactional
+    public ResponseEntity<?> nicknamecheck(String nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname);
+        if (member.isPresent()){
+            return ResponseEntity.badRequest().body(Map.of("msg", "닉네임 중복입니다"));
+        }
+        return ResponseEntity.ok().body(Map.of("msg", "가입가능한 닉네임입니다."));
+    }
+    //이메일 중복검사
+    @Transactional
+    public ResponseEntity<?> emailCheck(String email) {
+        Optional<Member> member = memberRepository.findByEmail(email);
+        if (member.isPresent()){
+            return ResponseEntity.badRequest().body(Map.of("msg", "이메일 중복입니다."));
+        }
+        return ResponseEntity.ok().body(Map.of("msg", "가입가능한 이메일입니다."));
+    }
 }
+
+

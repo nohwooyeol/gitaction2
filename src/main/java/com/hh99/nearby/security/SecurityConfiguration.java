@@ -32,6 +32,7 @@ public class SecurityConfiguration {
             "/api/login",
             "/h2-console/**",
             "/api/kakaologin",
+            "/api/email",
             "/api/**"
     };
     @Bean

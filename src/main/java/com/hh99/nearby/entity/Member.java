@@ -51,4 +51,6 @@ public class Member extends Timestamped{
         this.nickname = requestDto.getNickName();
         this.profileImg= requestDto.getProfileImg();
     }
+
+    public void update(String nickname){this.nickname = nickname;}
 }

@@ -45,6 +45,7 @@ public class KakaoLoginService {
         Member kakaoUser = registerKakaoUserIfNeed(kakaoUserInfo); //담아온 카카오데이터로 로그인 처리
 
 
+
         return kakaoUserInfo; //kakaouser로 리턴~
     }
 
@@ -120,15 +121,8 @@ public class KakaoLoginService {
         Member kakaoUser = memberRepository.findByNickname(nickname)  //카카오 닉네임이 있는지 확인
                 .orElse(null);
 
-        if (kakaoUser == null) { //db에 이메일이 없다면
-            // 회원가입
-            // password: random UUID
-           // String password = UUID.randomUUID().toString(); //이건 없어도 됨
-            // String encodedPassword = passwordEncoder.encode(password);//패스워드 암호화
+        if (kakaoUser == null) { //닉네임이 없다면
 
-            String profile = "https://ossack.s3.ap-northeast-2.amazonaws.com/basicprofile.png"; //프로필 이미지
-
-//            kakaoUser = new User(kakaoEmail, nickname, profile, encodedPassword); // 카카오 유저를 담을 객체
             kakaoUser = Member.builder()
                     .email(null)
                     .nickname(nickname)
