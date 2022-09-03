@@ -13,9 +13,5 @@ public class MemberResponseDto {
 
     private String profileImg;
 
-    private String tier;
 
-    private Long tierPoint;
-
-    private String tierIcon;
 }

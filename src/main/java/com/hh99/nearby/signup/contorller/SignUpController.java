@@ -29,4 +29,10 @@ public class SignUpController {
         response.sendRedirect("http://localhost:8080/");
         return signUpService.EmailCheck(id);
     }
+    
+    //닉네임 체크
+    @PostMapping("/api/nicknamecheck")
+    public ResponseEntity<?> nicknamecheck(@RequestBody String nickname){
+        return signUpService.nicknamecheck(nickname);
+    }
 }
