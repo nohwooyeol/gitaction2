@@ -26,5 +26,6 @@ public class DetailResponseDto {
     private String content;
     private String notice;
     private String writer;
+    private String level;
 
 }
