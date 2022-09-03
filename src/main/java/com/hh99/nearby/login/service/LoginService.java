@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -33,27 +34,27 @@ public class LoginService {
     public ResponseEntity<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
         Member member = isPresentMemberByEmail(requestDto.getEmail());
         if (null == member) {
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자를 찾을수 없습니다.");
+            return  ResponseEntity.badRequest().body(Map.of("msg","사용자를 찾을수 없습니다."));
         }
 
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Not existing email or wrong password");
+            return  ResponseEntity.badRequest().body(Map.of("msg","잘못된 입력입니다."));
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);
 
-        return ResponseEntity.status(HttpStatus.OK).body("로그인 성공");
+        return ResponseEntity.ok().body(Map.of("msg","로그인 성공"));
     }
 
     public ResponseEntity<?> logout(UserDetails user) {
         Member member = isPresentMemberByEmail(user.getUsername());
         if (null == member) {
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body("사용자를 찾을수 없습니다.");
+            return  ResponseEntity.badRequest().body(Map.of("msg","사용자를 찾을수 없습니다."));
         }
         tokenProvider.deleteRefreshToken(member);
 
-        return ResponseEntity.status(HttpStatus.OK).body("로그아웃 성공");
+        return ResponseEntity.ok().body(Map.of("msg","로그아웃 성공"));
     }
 
     @Transactional(readOnly = true)

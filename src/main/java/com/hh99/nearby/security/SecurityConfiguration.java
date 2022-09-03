@@ -31,7 +31,8 @@ public class SecurityConfiguration {
             "/api/signup",
             "/api/login",
             "/h2-console/**",
-            "/api/kakaologin"
+            "/api/kakaologin",
+            "/api/email"
     };
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -53,6 +54,7 @@ public class SecurityConfiguration {
                 .and()
                 .authorizeRequests()
                 .antMatchers(PERMIT_URL_ARRAY).permitAll()
+                .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtSecurityConfiguration(SECRET_KEY, tokenProvider, userDetailsService));
