@@ -14,7 +14,7 @@ public class DetailController {
     public final DetailService detailService;
 
     //상세 모달
-    @GetMapping("api/post/{id}")
+    @GetMapping("api/challenge/{id}")
     public ResponseEntity<?> detailModal(@PathVariable Long id){
         return detailService.detailModal(id);
     }
