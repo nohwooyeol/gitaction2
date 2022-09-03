@@ -16,14 +16,14 @@ import java.time.LocalTime;
 @AllArgsConstructor
 public class DetailResponseDto {
     private String title;
-    private String challengeimg;
-    private LocalDate startday;
-    private LocalTime starttime;
-    private Long targettime;
-    private LocalDateTime endtime;
-    private Long limitpeople;
+    private String challengeImg;
+    private LocalDate startDay;
+    private LocalTime startTime;
+    private Long targetTime;
+    private LocalDateTime endTime;
+    private Long limitPeople;
     private String content;
     private String notice;
-    private Member writer;
+    private String writer;
 
 }

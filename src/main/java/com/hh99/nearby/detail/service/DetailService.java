@@ -25,15 +25,15 @@ public class DetailService {
         }
         DetailResponseDto detailResponseDto = DetailResponseDto.builder()
                 .title(challenge.getTitle())
-                .challengeimg(challenge.getChallengeimg())
-                .startday(challenge.getStarttday())
-                .starttime(challenge.getStarttime())
-                .targettime(challenge.getTargettime())
-                .endtime(challenge.getEndtime())
-                .limitpeople(challenge.getLimitpeople())
+                .challengeImg(challenge.getChallengeimg())
+                .startDay(challenge.getStarttday())
+                .startTime(challenge.getStarttime())
+                .targetTime(challenge.getTargettime())
+                .endTime(challenge.getEndtime())
+                .limitPeople(challenge.getLimitpeople())
                 .content(challenge.getContent())
                 .notice(challenge.getNotice())
-                .writer(challenge.getWriter())
+                .writer(challenge.getWriter().getNickname())
                 .build();
         return ResponseEntity.ok().body(Map.of("detailModal", detailResponseDto, "msg", "상세모달 조회 완료"));
     }
