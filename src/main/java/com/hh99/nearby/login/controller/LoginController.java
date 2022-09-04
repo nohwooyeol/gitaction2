@@ -1,8 +1,8 @@
 package com.hh99.nearby.login.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.hh99.nearby.login.dto.KakaoRequestDto;
-import com.hh99.nearby.login.dto.LoginRequestDto;
+import com.hh99.nearby.login.dto.request.KakaoRequestDto;
+import com.hh99.nearby.login.dto.request.LoginRequestDto;
 import com.hh99.nearby.login.service.LoginService;
 import com.hh99.nearby.login.service.KakaoLoginService;
 import lombok.RequiredArgsConstructor;

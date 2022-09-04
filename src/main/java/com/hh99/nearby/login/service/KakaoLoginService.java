@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hh99.nearby.entity.Member;
-import com.hh99.nearby.login.dto.KakaoRequestDto;
+import com.hh99.nearby.login.dto.request.KakaoRequestDto;
 import com.hh99.nearby.signup.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

@@ -6,9 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 
@@ -17,9 +15,19 @@ import java.text.ParseException;
 public class ChallengeController {
     private final ChallengeService challengeService;
 
-    @PostMapping("/api/Challenge")  // <form> 요소가 파일이나 이미지를 서버로 전송할 때 주로 사용!!  HttpServletRequest request 추가해줘야함.
+    @PostMapping("/api/challenge")
     public ResponseEntity<?> createChallenge(@RequestBody ChallengeRequestDto challengeRequestDto, @AuthenticationPrincipal UserDetails user) throws ParseException {
        return challengeService.createChallenge(challengeRequestDto, user);
+    }
+
+    @PutMapping("/api/challenge/{challenge_id}")
+    public ResponseEntity<?> updateChallenge(@PathVariable Long challenge_id, @RequestBody ChallengeRequestDto challengeRequestDto, @AuthenticationPrincipal UserDetails user){
+        return challengeService.updateChallenge(challenge_id,challengeRequestDto, user);
+    }
+
+    @DeleteMapping("/api/challenge/{challenge_id}")
+    public ResponseEntity<?> deleteChallenge(@PathVariable Long challenge_id, @AuthenticationPrincipal UserDetails user){
+        return challengeService.deleteChallenge(challenge_id, user);
     }
 
 }
