@@ -11,8 +11,20 @@ import java.util.List;
 @Getter
 public class MypageResponseDto {
 
-    private Long totalTime; // 총 시간
+    private String nickname; //닉네임
 
-    private List<MypageChallengeList> challengeList; //첼린징 리스트
+    private String email; //이메일
+
+    private String profileImg; //프로필 이미지
+
+    private int level; //레벨
+
+    private int rank; //등수
+
+    private String totalTime; //사용시간
+    
+    List<MypageChallengeList> challengeLists; //도전중인 첼린지 리스트
+    
+    List<MypageFinishList> finishLists; //완료한 첼린지 리스트
 
 }
