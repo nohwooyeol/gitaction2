@@ -2,7 +2,7 @@ package com.hh99.nearby.security;
 
 
 import com.hh99.nearby.entity.Member;
-import com.hh99.nearby.signup.repository.MemberRepository;
+import com.hh99.nearby.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

@@ -3,8 +3,7 @@ package com.hh99.nearby.mypage.service;
 
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.mypage.dto.request.MypageRequestDto;
-import com.hh99.nearby.mypage.dto.response.MemberResponseDto;
-import com.hh99.nearby.signup.repository.MemberRepository;
+import com.hh99.nearby.repository.MemberRepository;
 import com.hh99.nearby.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -12,7 +11,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Map;
 import java.util.Optional;
