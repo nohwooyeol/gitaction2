@@ -1,13 +1,13 @@
 package com.hh99.nearby.login.service;
 
 import com.hh99.nearby.entity.Member;
-import com.hh99.nearby.login.dto.LoginRequestDto;
+import com.hh99.nearby.login.dto.request.LoginRequestDto;
+import com.hh99.nearby.login.dto.response.LoginResponseDto;
 import com.hh99.nearby.signup.repository.MemberRepository;
 import com.hh99.nearby.signup.repository.RefreshTokenRepository;
 import com.hh99.nearby.security.jwt.TokenDto;
 import com.hh99.nearby.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -34,27 +34,32 @@ public class LoginService {
     public ResponseEntity<?> login(LoginRequestDto requestDto, HttpServletResponse response) {
         Member member = isPresentMemberByEmail(requestDto.getEmail());
         if (null == member) {
-            return  ResponseEntity.badRequest().body(Map.of("msg","사용자를 찾을수 없습니다."));
+            return ResponseEntity.badRequest().body(Map.of("msg", "사용자를 찾을수 없습니다."));
         }
 
         if (!member.validatePassword(passwordEncoder, requestDto.getPassword())) {
-            return  ResponseEntity.badRequest().body(Map.of("msg","잘못된 입력입니다."));
+            return ResponseEntity.badRequest().body(Map.of("msg", "잘못된 입력입니다."));
         }
 
         TokenDto tokenDto = tokenProvider.generateTokenDto(member);
         tokenToHeaders(tokenDto, response);
 
-        return ResponseEntity.ok().body(Map.of("msg","로그인 성공"));
+        LoginResponseDto loginResponseDto = LoginResponseDto.builder()
+                .profileImg(member.getProfileImg())
+                .nickname(member.getNickname())
+                .level(0 + "LV")
+                .build();
+        return ResponseEntity.ok().body(Map.of("msg", "로그인 성공", "data", loginResponseDto));
     }
 
     public ResponseEntity<?> logout(UserDetails user) {
         Member member = isPresentMemberByEmail(user.getUsername());
         if (null == member) {
-            return  ResponseEntity.badRequest().body(Map.of("msg","사용자를 찾을수 없습니다."));
+            return ResponseEntity.badRequest().body(Map.of("msg", "사용자를 찾을수 없습니다."));
         }
         tokenProvider.deleteRefreshToken(member);
 
-        return ResponseEntity.ok().body(Map.of("msg","로그아웃 성공"));
+        return ResponseEntity.ok().body(Map.of("msg", "로그아웃 성공"));
     }
 
     @Transactional(readOnly = true)

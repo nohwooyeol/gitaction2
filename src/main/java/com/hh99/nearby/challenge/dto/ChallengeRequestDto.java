@@ -11,13 +11,12 @@ import java.util.List;
 @AllArgsConstructor
 public class ChallengeRequestDto {
     private String title; //챌리지 제목
-    private String challengeimg; //챌리지 대표 이미지
-    private String starttday; //챌리지 시작 일자
-    private String starttime; //챌리지 시작 시간
-    private Long targettime; //챌린지 진행시간
+    private String challengeImg; //챌리지 대표 이미지
+    private String startDay; //챌리지 시작 일자
+    private String startTime; //챌리지 시작 시간
+    private Long targetTime; //챌린지 진행시간
     private Long limit; //챌린지 제한인원
     private String content; //챌린지 내용
     private String notice; //챌린지 공지사항
-    private List<String> challengetag; //챌린지에 사용된 태그리스트
-
+    private List<String> challengeTag; //챌린지에 사용된 태그리스트
 }
