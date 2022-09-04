@@ -17,7 +17,7 @@ public class MypageController {
 
     private final MypageService mypageService;
 
-    //마이페이지
+   // 마이페이지
     @GetMapping("/api/member")
     public ResponseEntity<?> myPage(@AuthenticationPrincipal UserDetails user){
         return mypageService.myPage(user);
