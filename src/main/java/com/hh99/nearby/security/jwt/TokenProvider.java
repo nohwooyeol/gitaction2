@@ -2,7 +2,7 @@ package com.hh99.nearby.security.jwt;
 
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.entity.RefreshToken;
-import com.hh99.nearby.signup.repository.RefreshTokenRepository;
+import com.hh99.nearby.repository.RefreshTokenRepository;
 import com.hh99.nearby.security.UserDetailsImpl;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;

@@ -1,4 +1,4 @@
-package com.hh99.nearby.signup.repository;
+package com.hh99.nearby.repository;
 
 import com.hh99.nearby.entity.MemberChallenge;
 import org.springframework.data.jpa.repository.JpaRepository;

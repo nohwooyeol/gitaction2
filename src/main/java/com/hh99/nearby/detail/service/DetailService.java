@@ -4,9 +4,9 @@ import com.hh99.nearby.detail.dto.DetailResponseDto;
 import com.hh99.nearby.entity.Challenge;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.entity.MemberChallenge;
-import com.hh99.nearby.signup.repository.ChallengeRepository;
-import com.hh99.nearby.signup.repository.MemberChallengeRepository;
-import com.hh99.nearby.signup.repository.MemberRepository;
+import com.hh99.nearby.repository.ChallengeRepository;
+import com.hh99.nearby.repository.MemberChallengeRepository;
+import com.hh99.nearby.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -36,12 +36,12 @@ public class DetailService {
 
         DetailResponseDto detailResponseDto = DetailResponseDto.builder()
                 .title(challenge.getTitle())
-                .challengeImg(challenge.getChallengeimg())
-                .startDay(challenge.getStarttday())
-                .startTime(challenge.getStarttime())
-                .targetTime(challenge.getTargettime())
-                .endTime(challenge.getEndtime())
-                .limitPeople(challenge.getLimitpeople())
+                .challengeImg(challenge.getChallengeImg())
+                .startDay(challenge.getStartDay())
+                .startTime(challenge.getStartTime())
+                .targetTime(challenge.getTargetTime())
+                .endTime(challenge.getEndTime())
+                .limitPeople(challenge.getLimitPeople())
                 .participatePeople(participatePeople)
                 .content(challenge.getContent())
                 .notice(challenge.getNotice())
