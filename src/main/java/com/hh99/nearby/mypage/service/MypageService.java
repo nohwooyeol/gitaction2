@@ -47,6 +47,7 @@ public class MypageService {
                     MypageChallengeList.builder()
                             .title(challenge.getChallenge().getTitle())
                             .challengeImg(challenge.getChallenge().getChallengeImg())
+                            .startDay(challenge.getChallenge().getStartDay())
                             .startTime(challenge.getChallenge().getStartTime())
                             .tagetTime(challenge.getChallenge().getTargetTime())
                             .endTime(challenge.getChallenge().getEndTime())
