@@ -87,8 +87,8 @@ public class SignUpService {
     }
     //이메일 중복검사
     @Transactional
-    public ResponseEntity<?> emailCheck(String email) {
-        Optional<Member> member = memberRepository.findByEmail(email);
+    public ResponseEntity<?> emailCheck(SignUpRequestDto email) {
+        Optional<Member> member = memberRepository.findByEmail(email.getEmail());
         if (member.isPresent()){
             return ResponseEntity.badRequest().body(Map.of("msg", "이메일 중복입니다."));
         }
