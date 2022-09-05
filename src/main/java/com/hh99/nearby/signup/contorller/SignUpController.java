@@ -37,7 +37,7 @@ public class SignUpController {
     }
     //이메일 중복검사
     @PostMapping("/api/emailcheck")
-    public ResponseEntity<?> emailCheck(@RequestBody String email){
+    public ResponseEntity<?> emailCheck(@RequestBody SignUpRequestDto email){
         return signUpService.emailCheck(email);
     }
 }
