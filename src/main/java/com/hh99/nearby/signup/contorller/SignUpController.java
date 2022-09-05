@@ -32,7 +32,7 @@ public class SignUpController {
     
     //닉네임 체크
     @PostMapping("/api/nicknamecheck")
-    public ResponseEntity<?> nicknamecheck(@RequestBody String nickname){
+    public ResponseEntity<?> nicknamecheck(@RequestBody SignUpRequestDto nickname){
         return signUpService.nicknamecheck(nickname);
     }
     //이메일 중복검사

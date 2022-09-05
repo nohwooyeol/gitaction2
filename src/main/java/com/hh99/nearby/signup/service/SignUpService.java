@@ -78,8 +78,8 @@ public class SignUpService {
     
     //닉네임 중복체크
     @Transactional
-    public ResponseEntity<?> nicknamecheck(String nickname) {
-        Optional<Member> member = memberRepository.findByNickname(nickname);
+    public ResponseEntity<?> nicknamecheck(SignUpRequestDto nickname) {
+        Optional<Member> member = memberRepository.findByNickname(nickname.getNickname());
         if (member.isPresent()){
             return ResponseEntity.badRequest().body(Map.of("msg", "닉네임 중복입니다"));
         }
