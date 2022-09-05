@@ -3,10 +3,12 @@ package com.hh99.nearby.mypage.service;
 
 import com.hh99.nearby.entity.Challenge;
 import com.hh99.nearby.entity.Member;
+import com.hh99.nearby.entity.MemberChallenge;
 import com.hh99.nearby.mypage.dto.request.MypageRequestDto;
 import com.hh99.nearby.mypage.dto.response.MypageChallengeList;
 import com.hh99.nearby.mypage.dto.response.MypageResponseDto;
 import com.hh99.nearby.repository.ChallengeRepository;
+import com.hh99.nearby.repository.MemberChallengeRepository;
 import com.hh99.nearby.repository.MemberRepository;
 import com.hh99.nearby.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +18,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 
 @Service
@@ -30,6 +29,8 @@ public class MypageService {
 
     private final ChallengeRepository challengeRepository;
 
+    private final MemberChallengeRepository memberChallengeRepository;
+
 
 
 //    private final ChallengeRepo
@@ -38,21 +39,27 @@ public class MypageService {
     public ResponseEntity<?> myPage(@AuthenticationPrincipal UserDetails user) {
         Member member = memberRepository.findByEmail(user.getUsername()).get();
 
-        List<Challenge> challengeList = challengeRepository.findAll();
+        //참가한 리스트 불러오는
+        List<MemberChallenge> challengeList = memberChallengeRepository.findByMember(member);
         ArrayList<MypageChallengeList> mypageChallengeList = new ArrayList<>();
-        for (Challenge challenge : challengeList) {
+        for (MemberChallenge challenge : challengeList) {
             mypageChallengeList.add(
                     MypageChallengeList.builder()
-                            .title(challenge.getTitle())
-                            .challengeImg(challenge.getChallengeImg())
-                            .startTime(challenge.getStartTime())
-                            .tagetTime(challenge.getTargetTime())
-                            .endTime(challenge.getEndTime())
-                            .limitPeople(challenge.getLimitPeople())
+                            .title(challenge.getChallenge().getTitle())
+                            .challengeImg(challenge.getChallenge().getChallengeImg())
+                            .startDay(challenge.getChallenge().getStartDay())
+                            .startTime(challenge.getChallenge().getStartTime())
+                            .tagetTime(challenge.getChallenge().getTargetTime())
+                            .endTime(challenge.getChallenge().getEndTime())
+                            .limitPeople(challenge.getChallenge().getLimitPeople())
                             .build()
             );
         }
-
+        
+        //내가 저장한 페이지
+        
+        //내가 완료한 페이지
+        
 
         return ResponseEntity.ok(MypageResponseDto.builder()
                 .nickname(member.getNickname())
@@ -61,7 +68,7 @@ public class MypageService {
                 .level(100)
                 .rank(100)
                 .totalTime("시간")
-//                .challengeLists()
+                .challengeLists(mypageChallengeList)
 //                .finishLists()
                 .build());
     }
@@ -72,6 +79,7 @@ public class MypageService {
         member.get().update(requestDto);
         return ResponseEntity.ok(Map.of("msg","수정완료"));
     }
+
 
 
 }
