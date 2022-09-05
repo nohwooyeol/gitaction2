@@ -33,9 +33,9 @@ public class LoginController {
     }
 
     @GetMapping("/api/kakaologin")
-    public ResponseEntity<?> kakaoLogin(@RequestParam String code) throws JsonProcessingException {
+    public ResponseEntity<?> kakaoLogin(@RequestParam String code,HttpServletResponse response) throws JsonProcessingException {
         System.out.println("인가코드 : "+code);
-        KakaoRequestDto kakaoUser = kakaoLoginService.kakaoLogin(code);
+        KakaoRequestDto kakaoUser = kakaoLoginService.kakaoLogin(code,response);
         return ResponseEntity.ok(kakaoUser);
     }
 }

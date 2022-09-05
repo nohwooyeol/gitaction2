@@ -6,17 +6,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.login.dto.request.KakaoRequestDto;
 import com.hh99.nearby.repository.MemberRepository;
+import com.hh99.nearby.security.UserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import javax.servlet.http.HttpServletResponse;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +40,7 @@ public class KakaoLoginService {
     String url;
 
 
-    public KakaoRequestDto kakaoLogin(String code)throws JsonProcessingException {
+    public KakaoRequestDto kakaoLogin(String code,HttpServletResponse response)throws JsonProcessingException {
 
         // 1. "인가 코드"로 "액세스 토큰" 요청
         String accessToken = getAccessToken(code);
@@ -44,7 +51,13 @@ public class KakaoLoginService {
 //         3. 카카오ID로 회원가입 처리
         Member kakaoUser = registerKakaoUserIfNeed(kakaoUserInfo); //담아온 카카오데이터로 로그인 처리
 
+        // 4. 강제 로그인 처리
+        Authentication authentication = forceLogin(kakaoUser);
 
+        // 5. response Header에 JWT 토큰 추가
+//        kakaoUsersAuthorizationInput(authentication, response);
+
+//        System.out.println("토큰값": +response.getHeaders(""));
 
         return kakaoUserInfo; //kakaouser로 리턴~
     }
@@ -136,4 +149,20 @@ public class KakaoLoginService {
         }
         return kakaoUser; //유저정보 리턴
     }
+
+    // 4. 강제 로그인 처리
+    private Authentication forceLogin(Member kakaoUser) {
+        UserDetails userDetails = new UserDetailsImpl(kakaoUser);
+        Authentication authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        return authentication;
+    }
+
+    // 5. response Header에 JWT 토큰 추가
+//    private void kakaoUsersAuthorizationInput(Authentication authentication, HttpServletResponse response) {
+//        // response header에 token 추가
+//        UserDetailsImpl userDetailsImpl = ((UserDetailsImpl) authentication.getPrincipal());
+//        String token = JwtTokenUtils.generateJwtToken(userDetailsImpl);
+//        response.addHeader("Authorization", "BEARER" + " " + token);
+//    }
 }
