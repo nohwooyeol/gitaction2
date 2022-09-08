@@ -43,8 +43,6 @@ jobs:
         with:
             files: ${{ env.RESOURCE_PATH }}
         env:
-          cloud.aws.credentials.accessKey: ${{ secrets.AWS_ACCESS }}
-          cloud.aws.credentials.secretKey: ${{ secrets.AWS_SECRET }}
           jwt.secret: ${{ secrets.JWT_SECRET }}
 
       # (3) Gradle build (Test 제외)
