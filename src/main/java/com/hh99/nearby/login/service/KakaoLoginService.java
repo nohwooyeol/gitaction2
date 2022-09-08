@@ -5,8 +5,12 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.hh99.nearby.entity.Member;
 import com.hh99.nearby.login.dto.request.KakaoRequestDto;
+import com.hh99.nearby.login.dto.request.Kakaocode;
+import com.hh99.nearby.login.dto.response.KakaoResponseDto;
 import com.hh99.nearby.repository.MemberRepository;
 import com.hh99.nearby.security.UserDetailsImpl;
+import com.hh99.nearby.security.jwt.TokenDto;
+import com.hh99.nearby.security.jwt.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -24,12 +28,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class KakaoLoginService {
 
-    private final PasswordEncoder passwordEncoder;
+    private final TokenProvider tokenProvider;
 
     private final MemberRepository memberRepository;
 
@@ -40,26 +46,32 @@ public class KakaoLoginService {
     String url;
 
 
-    public KakaoRequestDto kakaoLogin(String code,HttpServletResponse response)throws JsonProcessingException {
-
+    public ResponseEntity<?> kakaoLogin(Kakaocode kakaocode, HttpServletResponse response)throws JsonProcessingException {
+        System.out.println("---------------1--------------");
         // 1. "인가 코드"로 "액세스 토큰" 요청
-        String accessToken = getAccessToken(code);
-
+        String accessToken = getAccessToken(kakaocode.getCode());
+        System.out.println("---------------2--------------");
+        String nickname = kakaocode.getNickname();
         // 2. 토큰으로 카카오 API 호출
         KakaoRequestDto kakaoUserInfo = getKakaoUserInfo(accessToken); //엑세스 토큰값으로 유저 정보 받아오기!
-
+        System.out.println("---------------3--------------");
+        Optional<Member> member = memberRepository.findByNickname(kakaoUserInfo.getNickname());
+        if (member.isPresent()){
+            return ResponseEntity.badRequest().body(Map.of("msg", "닉네임 중복입니다"));
+        };
+        System.out.println("---------------4--------------");
 //         3. 카카오ID로 회원가입 처리
         Member kakaoUser = registerKakaoUserIfNeed(kakaoUserInfo); //담아온 카카오데이터로 로그인 처리
-
+        System.out.println("---------------5--------------");
         // 4. 강제 로그인 처리
         Authentication authentication = forceLogin(kakaoUser);
-
+        System.out.println("---------------6--------------");
         // 5. response Header에 JWT 토큰 추가
-//        kakaoUsersAuthorizationInput(authentication, response);
+        kakaoUsersAuthorizationInput(kakaoUser,authentication, response);
+        System.out.println("---------------7--------------");
 
-//        System.out.println("토큰값": +response.getHeaders(""));
 
-        return kakaoUserInfo; //kakaouser로 리턴~
+        return ResponseEntity.ok(kakaoUserInfo); //kakaouser로 리턴~
     }
 
     // 1. "인가 코드"로 "액세스 토큰" 요청
@@ -159,10 +171,11 @@ public class KakaoLoginService {
     }
 
     // 5. response Header에 JWT 토큰 추가
-//    private void kakaoUsersAuthorizationInput(Authentication authentication, HttpServletResponse response) {
-//        // response header에 token 추가
-//        UserDetailsImpl userDetailsImpl = ((UserDetailsImpl) authentication.getPrincipal());
-//        String token = JwtTokenUtils.generateJwtToken(userDetailsImpl);
-//        response.addHeader("Authorization", "BEARER" + " " + token);
-//    }
+    private void kakaoUsersAuthorizationInput(Member kakaoUser,Authentication authentication, HttpServletResponse response) {
+        // response header에 token 추가
+        UserDetailsImpl userDetailsImpl = ((UserDetailsImpl) authentication.getPrincipal());
+        TokenDto token = tokenProvider.generateTokenDto(kakaoUser);//.generateJwtToken(userDetailsImpl);
+        System.out.println(token.getAccessToken());
+        response.addHeader("Authorization", "BEARER" + " " + token.getAccessToken());
+    }
 }
