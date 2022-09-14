@@ -1,9 +1,10 @@
+# appspec.yml
+
 version: 0.0
 os: linux
-
 files:
-  - source:  /
-    destination: /home/ubuntu/app
+  - source: /
+    destination: /home/ubuntu/app/deploy # 프로젝트 이름
     overwrite: yes
 
 permissions:
@@ -13,11 +14,7 @@ permissions:
     group: ubuntu
 
 hooks:
-  AfterInstall:
-    - location: scripts/stop.sh
-      timeout: 60
-      runas: ubuntu
   ApplicationStart:
-    - location: scripts/start.sh
-      timeout: 60
+    - location: deploy.sh
+      timeout: 150
       runas: ubuntu
