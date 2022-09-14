@@ -15,7 +15,7 @@ env:
   S3_BUCKET_NAME: ssggwan-s3-bucket
   CODE_DEPLOY_APPLICATION_NAME: ssggwan-app
   CODE_DEPLOY_DEPLOYMENT_GROUP_NAME: ssggwan-deployment-group
-#  RESOURCE_PATH: ./src/main/resources/application.properties
+  RESOURCE_PATH: ./src/main/resources/application.properties
 
 permissions:
   contents: read
@@ -38,12 +38,12 @@ jobs:
           distribution: 'temurin'
           java-version: '11'
 
-#      - name: Generate Environment Variables File for Properties
-#        uses: microsoft/variable-substitution@v1
-#        with:
-#            files: ${{ env.RESOURCE_PATH }}
-#        env:
-#          jwt.secret: ${{ secrets.JWT_SECRET }}
+      - name: Generate Environment Variables File for Properties
+        uses: microsoft/variable-substitution@v1
+        with:
+            files: ${{ env.RESOURCE_PATH }}
+        env:
+          jwt.secret: ${{ secrets.JWT_SECRET }}
 
       # (3) Gradle build (Test 제외)
       - name: Build with Gradle
